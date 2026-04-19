@@ -1,15 +1,4 @@
 export default async function handler(req, res) {
-    // Enable CORS
-    res.setHeader('Access-Control-Allow-Credentials', true);
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-    res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
-    
-    if (req.method === 'OPTIONS') {
-        res.status(200).end();
-        return;
-    }
-    
     const { code } = req.query;
     
     if (!code) {
@@ -18,11 +7,10 @@ export default async function handler(req, res) {
     
     const CLIENT_ID = '1494268332336222378';
     const CLIENT_SECRET = 'VLYIl_i-AD5C7FBdKIQM64tNUGrPV49N';
-    // IMPORTANT: Use the EXACT same URL as in Discord
-    const REDIRECT_URI = 'https://esdashboard.vercel.app';
+    // Use environment variable for redirect URI
+    const REDIRECT_URI = process.env.REDIRECT_URI || 'https://esdashboard-rjkh0fg57-nexustechnologies.vercel.app';
     
     try {
-        // Exchange code for token
         const tokenResponse = await fetch('https://discord.com/api/oauth2/token', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -41,7 +29,6 @@ export default async function handler(req, res) {
             return res.status(400).json({ error: 'Failed to get access token' });
         }
         
-        // Get user info
         const userResponse = await fetch('https://discord.com/api/users/@me', {
             headers: { Authorization: `Bearer ${tokenData.access_token}` }
         });
