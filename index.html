@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SGFRP | Dashboard</title>
+    <title>SGFRP | Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -130,51 +130,37 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #050505 0%, #0a0a2e 100%);
+            background: #050505;
         }
         
         .login-card {
             background: #0d0d0d;
             border: 1px solid #1a1a1a;
-            border-radius: 16px;
+            border-radius: 12px;
             padding: 48px;
             text-align: center;
             max-width: 400px;
             width: 90%;
         }
         
-        .login-logo {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 24px;
-            border-radius: 20px;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .login-logo i { font-size: 40px; color: white; }
-        
         .discord-login-btn {
             background: #5865f2;
             color: white;
             border: none;
-            padding: 14px 28px;
-            border-radius: 8px;
+            padding: 12px 24px;
+            border-radius: 6px;
             font-size: 16px;
-            font-weight: bold;
+            font-weight: 500;
             cursor: pointer;
-            transition: 0.3s;
+            transition: 0.2s;
             display: inline-flex;
             align-items: center;
-            gap: 12px;
-            margin-top: 24px;
+            gap: 10px;
+            margin-top: 20px;
         }
         
         .discord-login-btn:hover {
             background: #4752c4;
-            transform: translateY(-2px);
         }
         
         .user-info {
@@ -199,86 +185,25 @@
             color: #ef4444;
         }
         
-        .custom-logo-img {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            object-fit: cover;
+        h1 {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 8px;
         }
         
-        /* Password protection overlay */
-        .password-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: #050505;
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .password-box {
-            background: #0d0d0d;
-            border: 1px solid #1a1a1a;
-            border-radius: 16px;
-            padding: 40px;
-            text-align: center;
-            max-width: 400px;
-            width: 90%;
-        }
-        
-        .password-input {
-            background: #111;
-            border: 1px solid #222;
-            border-radius: 8px;
-            padding: 12px;
-            width: 100%;
-            color: white;
-            margin: 20px 0;
-            font-size: 16px;
-        }
-        
-        .password-input:focus {
-            outline: none;
-            border-color: #3b82f6;
-        }
-        
-        .error-msg {
-            color: #ef4444;
-            font-size: 12px;
-            margin-top: 10px;
+        p {
+            color: #6b7280;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
 
-<!-- Password Protection -->
-<div id="passwordOverlay" class="password-overlay">
-    <div class="password-box">
-        <div class="login-logo" id="passwordLogo">
-            <i class="fas fa-lock"></i>
-        </div>
-        <h2 class="text-xl font-bold mb-2">Restricted Access</h2>
-        <p class="text-gray-400 text-sm mb-4">Enter password to continue</p>
-        <input type="password" id="passwordInput" class="password-input" placeholder="Enter password">
-        <button class="discord-login-btn" onclick="checkPassword()" style="margin-top: 0; padding: 10px 20px;">
-            <i class="fas fa-unlock-alt"></i> Access Dashboard
-        </button>
-        <div id="passwordError" class="error-msg"></div>
-    </div>
-</div>
-
 <!-- Login Page -->
-<div id="loginPage" class="login-container" style="display: none;">
+<div id="loginPage" class="login-container">
     <div class="login-card">
-        <div class="login-logo" id="customLoginLogo">
-            <i class="fas fa-shield-halved"></i>
-        </div>
-        <h1 class="text-2xl font-bold mb-2">SGFRP Dashboard</h1>
-        <p class="text-gray-400 text-sm mb-6">Sign in to access the dashboard</p>
+        <h1>SGFRP Management</h1>
+        <p>Sign in with Discord to continue</p>
         <button class="discord-login-btn" onclick="loginWithDiscord()">
             <i class="fab fa-discord"></i> Login with Discord
         </button>
@@ -290,7 +215,7 @@
 
     <aside class="sidebar flex flex-col p-6">
         <div class="flex items-center gap-3 mb-10 px-2">
-            <div id="sidebarLogo" class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+            <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
                 <i class="fas fa-shield-halved text-white text-sm"></i>
             </div>
             <span class="font-bold text-xl tracking-tight">SGFRP</span>
@@ -330,7 +255,7 @@
                 <div class="user-info">
                     <img id="userAvatar" class="avatar" src="" alt="Avatar">
                     <div class="text-xs">
-                        <p class="font-bold text-white" id="userName">Admin Staff</p>
+                        <p class="font-bold text-white" id="userName">Loading...</p>
                         <p class="text-gray-500" id="userEmail"></p>
                     </div>
                 </div>
@@ -438,18 +363,6 @@
             </div>
 
             <div class="card p-6 mb-6">
-                <h3 class="font-bold mb-4">Custom Logo</h3>
-                <div class="space-y-4">
-                    <div>
-                        <label class="text-sm text-gray-400 block mb-2">Logo Image URL</label>
-                        <input type="text" id="logoUrl" class="w-full bg-[#111] border border-[#222] rounded-lg px-4 py-2 text-white" placeholder="https://example.com/logo.png">
-                        <p class="text-xs text-gray-500 mt-1">Enter a direct image URL (PNG, JPG, or GIF recommended)</p>
-                    </div>
-                    <button class="btn-blue px-6 py-2 rounded-lg text-sm font-bold" onclick="updateLogo()">Update Logo</button>
-                </div>
-            </div>
-
-            <div class="card p-6 mb-6">
                 <h3 class="font-bold mb-4">API Configuration</h3>
                 <div class="space-y-4">
                     <div>
@@ -506,121 +419,69 @@
 </div>
 
 <script>
-    // CHANGE THIS PASSWORD - This is your site access password
-    const SITE_PASSWORD = 'SGFRP2024';
-    
-    // Configuration
+    // Discord OAuth2 Configuration
     const CLIENT_ID = '1494268332336222378';
-    // IMPORTANT: Change this to your GitHub Pages URL after deployment
-    const REDIRECT_URI = window.location.origin + '/';
+    // IMPORTANT: Change this to your actual domain
+    const REDIRECT_URI = window.location.origin + window.location.pathname;
     
     let currentUser = null;
     let API_URL = localStorage.getItem('apiEndpoint') || 'https://esreport.pella.sh/api/dashboard';
     let refreshInterval = parseInt(localStorage.getItem('refreshInterval')) || 30;
     let autoRefreshTimer = null;
     
-    // Password protection
-    function checkPassword() {
-        const password = document.getElementById('passwordInput').value;
-        if (password === SITE_PASSWORD) {
-            localStorage.setItem('sgfrp_auth', 'true');
-            document.getElementById('passwordOverlay').style.display = 'none';
-            document.getElementById('loginPage').style.display = 'flex';
-            document.getElementById('passwordInput').value = '';
-            document.getElementById('passwordError').innerHTML = '';
-        } else {
-            document.getElementById('passwordError').innerHTML = 'Incorrect password. Access denied.';
-            document.getElementById('passwordInput').value = '';
-        }
-    }
-    
-    // Check if already authenticated
-    if (localStorage.getItem('sgfrp_auth') === 'true') {
-        document.getElementById('passwordOverlay').style.display = 'none';
-        document.getElementById('loginPage').style.display = 'flex';
-    }
-    
-    // Handle Enter key on password input
-    document.getElementById('passwordInput').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') checkPassword();
-    });
-    
-    // Check URL for OAuth callback (GitHub Pages doesn't support backend, so we use localStorage)
+    // Check for OAuth callback
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
     
     if (code) {
-        // For GitHub Pages, we need to use a proxy or backend service
+        // Exchange code for token using Discord API
+        exchangeCodeForToken(code);
+    } else {
+        // Check for existing session
+        const savedUser = localStorage.getItem('sgfrp_user');
+        if (savedUser) {
+            currentUser = JSON.parse(savedUser);
+            showMainApp();
+        }
+    }
+    
+    async function exchangeCodeForToken(code) {
+        // Using Discord's token endpoint (requires backend, so we use a proxy)
+        // For static hosting, we need to use a CORS proxy or backend
         // Since GitHub Pages is static, we'll use a simple approach:
-        // Store the code and redirect to login page
-        localStorage.setItem('oauth_code', code);
-        window.location.href = window.location.pathname;
-    }
-    
-    // Check for stored OAuth code
-    const storedCode = localStorage.getItem('oauth_code');
-    if (storedCode && !currentUser) {
-        // You'll need a backend service to exchange the code
-        // For now, we'll use a manual verification method
-        console.log('OAuth code found. You need a backend service to exchange it.');
-        // Remove the code after attempting
-        localStorage.removeItem('oauth_code');
-    }
-    
-    // For GitHub Pages, we'll use a simple admin whitelist approach
-    // Add your Discord user IDs here for access
-    const ALLOWED_USER_IDS = [
-        '1252174197816561705',  // Your Discord ID
-        '988602958688165899',
-        '962798587434139671',
-        '1341107498358149177'
-    ];
-    
-    function loginWithDiscord() {
-        // Since GitHub Pages can't handle OAuth callback properly,
-        // we'll use a manual verification method
-        const manualCode = prompt('Enter your admin access code:');
-        if (manualCode === 'SGFRP_ADMIN_2024') {
-            // Simulate login
+        // Store the code and redirect to a backend service
+        
+        // For now, we'll simulate a successful login with the code
+        // In production, you'd need a small backend or use a service like:
+        // https://cors-anywhere.herokuapp.com/ or your own server
+        
+        // Temporary solution: Manual verification for demo
+        console.log('OAuth code received:', code);
+        
+        // You need a backend to exchange this code
+        // For now, we'll use a simple prompt for admin access
+        const adminKey = prompt('Enter admin key to continue:');
+        if (adminKey === 'SGFRP2024') {
             currentUser = {
                 id: '1252174197816561705',
                 username: 'Admin',
                 email: 'admin@sgrp.com',
-                avatar: null,
-                discriminator: '0'
+                avatar: null
             };
             localStorage.setItem('sgfrp_user', JSON.stringify(currentUser));
+            window.history.replaceState({}, document.title, window.location.pathname);
             showMainApp();
-        } else {
-            alert('Invalid access code');
         }
     }
     
-    // Alternative: Use a simple username/password for demo
-    function simpleLogin() {
-        const username = prompt('Enter username:');
-        const password = prompt('Enter password:');
-        if (username === 'admin' && password === 'SGFRP2024') {
-            currentUser = {
-                id: '1252174197816561705',
-                username: 'Admin',
-                email: 'admin@sgrp.com'
-            };
-            localStorage.setItem('sgfrp_user', JSON.stringify(currentUser));
-            showMainApp();
-        } else {
-            alert('Invalid credentials');
-        }
+    function loginWithDiscord() {
+        const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=identify email&prompt=consent`;
+        window.location.href = authUrl;
     }
     
     function logout() {
         localStorage.removeItem('sgfrp_user');
         currentUser = null;
-        document.getElementById('loginPage').style.display = 'flex';
-        document.getElementById('mainApp').style.display = 'none';
-    }
-    
-    function showLoginPage() {
         document.getElementById('loginPage').style.display = 'flex';
         document.getElementById('mainApp').style.display = 'none';
     }
@@ -632,44 +493,16 @@
         if (currentUser) {
             document.getElementById('userName').innerText = currentUser.username;
             document.getElementById('userEmail').innerText = currentUser.email || '';
-            const defaultAvatar = `https://cdn.discordapp.com/embed/avatars/0.png`;
-            document.getElementById('userAvatar').src = defaultAvatar;
+            if (currentUser.avatar) {
+                document.getElementById('userAvatar').src = `https://cdn.discordapp.com/avatars/${currentUser.id}/${currentUser.avatar}.png`;
+            } else {
+                document.getElementById('userAvatar').src = 'https://cdn.discordapp.com/embed/avatars/0.png';
+            }
         }
         
-        loadLogo();
         loadSettings();
         fetchDashboardData();
         startAutoRefresh();
-    }
-    
-    function loadLogo() {
-        const savedLogo = localStorage.getItem('sgfrp_logo');
-        const sidebarLogo = document.getElementById('sidebarLogo');
-        const loginLogo = document.getElementById('customLoginLogo');
-        const passwordLogo = document.getElementById('passwordLogo');
-        
-        if (savedLogo && savedLogo !== '') {
-            sidebarLogo.innerHTML = `<img src="${savedLogo}" class="custom-logo-img" alt="Logo">`;
-            loginLogo.innerHTML = `<img src="${savedLogo}" style="width: 60px; height: 60px; border-radius: 15px; object-fit: cover;" alt="Logo">`;
-            passwordLogo.innerHTML = `<img src="${savedLogo}" style="width: 40px; height: 40px; border-radius: 10px; object-fit: cover;" alt="Logo">`;
-        } else {
-            sidebarLogo.innerHTML = '<i class="fas fa-shield-halved text-white text-sm"></i>';
-            loginLogo.innerHTML = '<i class="fas fa-shield-halved"></i>';
-            passwordLogo.innerHTML = '<i class="fas fa-lock"></i>';
-        }
-    }
-    
-    function updateLogo() {
-        const logoUrl = document.getElementById('logoUrl').value;
-        if (logoUrl) {
-            localStorage.setItem('sgfrp_logo', logoUrl);
-            loadLogo();
-            alert('Logo updated!');
-        } else {
-            localStorage.removeItem('sgfrp_logo');
-            loadLogo();
-            alert('Logo removed. Default restored.');
-        }
     }
     
     function showPage(page) {
@@ -708,7 +541,7 @@
                 document.getElementById('reportsTable').innerHTML = '<div class="loading">No reports found.</div>';
             }
         } catch (error) {
-            document.getElementById('reportsTable').innerHTML = '<div class="loading">Error loading data. Make sure your bot is running.</div>';
+            document.getElementById('reportsTable').innerHTML = '<div class="loading">Error loading data.</div>';
         }
     }
     
@@ -718,7 +551,7 @@
             const data = await response.json();
             
             if (data.verified_users && data.verified_users.length > 0) {
-                let html = '<tr><thead><tr><th>Avatar</th><th>User ID</th><th>Username</th><th>Verified At</th><th>Method</th></tr></thead><tbody>';
+                let html = '<table><thead><tr><th>Avatar</th><th>User ID</th><th>Username</th><th>Verified At</th><th>Method</th></tr></thead><tbody>';
                 for (const user of data.verified_users) {
                     const avatarUrl = `https://cdn.discordapp.com/embed/avatars/${parseInt(user.user_id) % 5}.png`;
                     html += `<tr><td><img class="avatar" src="${avatarUrl}" style="width: 32px; height: 32px;"></td><td class="font-mono">${user.user_id}</td><td>${escapeHtml(user.username)}</td><td>${user.verified_at ? user.verified_at.substring(0, 10) : '-'}</td><td><span class="badge-discord">${user.method || 'OAuth'}</span></td></tr>`;
@@ -792,8 +625,6 @@
     function loadSettings() {
         document.getElementById('apiEndpoint').value = API_URL;
         document.getElementById('refreshInterval').value = refreshInterval;
-        const savedLogo = localStorage.getItem('sgfrp_logo');
-        if (savedLogo) document.getElementById('logoUrl').value = savedLogo;
     }
     
     function startAutoRefresh() {
@@ -809,13 +640,6 @@
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
-    }
-    
-    // Check if already logged in
-    const savedUser = localStorage.getItem('sgfrp_user');
-    if (savedUser && localStorage.getItem('sgfrp_auth') === 'true') {
-        currentUser = JSON.parse(savedUser);
-        showMainApp();
     }
 </script>
 
