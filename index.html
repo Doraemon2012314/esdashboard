@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SGFRP | Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: #050505;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+        }
+        
+        .sidebar {
+            background-color: #0a0a0a;
+            width: 260px;
+            border-right: 1px solid #1a1a1a;
+        }
+        
+        .nav-link {
+            color: #888;
+            transition: 0.2s;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            color: #fff;
+            background-color: #111;
+        }
+        
+        .card {
+            background-color: #0d0d0d;
+            border: 1px solid #1a1a1a;
+            border-radius: 12px;
+        }
+        
+        .btn-blue {
+            background-color: #3b82f6;
+            transition: 0.3s;
+        }
+        
+        .btn-blue:hover {
+            background-color: #2563eb;
+            transform: translateY(-1px);
+        }
+        
+        .status-pending { color: #eab308; }
+        .status-accepted { color: #22c55e; }
+        .status-denied { color: #ef4444; }
+        
+        .badge-roblox {
+            background-color: #1a1a1a;
+            color: #ef4444;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        
+        .badge-discord {
+            background-color: #1a1a1a;
+            color: #5865f2;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        
+        table { width: 100%; }
+        
+        th {
+            text-align: left;
+            padding: 16px 24px;
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #6b7280;
+            background-color: #080808;
+        }
+        
+        td {
+            padding: 16px 24px;
+            border-bottom: 1px solid #1a1a1a;
+        }
+        
+        tr:hover { background-color: #111; }
+        
+        .server-selector {
+            background-color: #111;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #222;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6b7280;
+        }
+        
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #050505 0%, #0a0a2e 100%);
+        }
+        
+        .login-card {
+            background: #0d0d0d;
+            border: 1px solid #1a1a1a;
+            border-radius: 16px;
+            padding: 48px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        
+        .login-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 24px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .login-logo i { font-size: 40px; color: white; }
+        
+        .discord-login-btn {
+            background: #5865f2;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        
+        .discord-login-btn:hover {
+            background: #4752c4;
+            transform: translateY(-2px);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logout-btn {
+            background: none;
+            border: 1px solid #333;
+            color: #888;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: 0.2s;
+        }
+        
+        .logout-btn:hover {
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+        
+        .custom-logo-img {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+        
+        /* Password protection overlay */
+        .password-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #050505;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .password-box {
+            background: #0d0d0d;
+            border: 1px solid #1a1a1a;
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        
+        .password-input {
+            background: #111;
+            border: 1px solid #222;
+            border-radius: 8px;
+            padding: 12px;
+            width: 100%;
+            color: white;
+            margin: 20px 0;
+            font-size: 16px;
+        }
+        
+        .password-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+        
+        .error-msg {
+            color: #ef4444;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Password Protection -->
+<div id="passwordOverlay" class="password-overlay">
+    <div class="password-box">
+        <div class="login-logo" id="passwordLogo">
+            <i class="fas fa-lock"></i>
+        </div>
+        <h2 class="text-xl font-bold mb-2">Restricted Access</h2>
+        <p class="text-gray-400 text-sm mb-4">Enter password to continue</p>
+        <input type="password" id="passwordInput" class="password-input" placeholder="Enter password">
+        <button class="discord-login-btn" onclick="checkPassword()" style="margin-top: 0; padding: 10px 20px;">
+            <i class="fas fa-unlock-alt"></i> Access Dashboard
+        </button>
+        <div id="passwordError" class="error-msg"></div>
+    </div>
+</div>
+
+<!-- Login Page -->
+<div id="loginPage" class="login-container" style="display: none;">
+    <div class="login-card">
+        <div class="login-logo" id="customLoginLogo">
+            <i class="fas fa-shield-halved"></i>
+        </div>
+        <h1 class="text-2xl font-bold mb-2">SGFRP Dashboard</h1>
+        <p class="text-gray-400 text-sm mb-6">Sign in to access the dashboard</p>
+        <button class="discord-login-btn" onclick="loginWithDiscord()">
+            <i class="fab fa-discord"></i> Login with Discord
+        </button>
+    </div>
+</div>
+
+<!-- Main App (Hidden until login) -->
+<div id="mainApp" style="display: none;" class="flex">
+
+    <aside class="sidebar flex flex-col p-6">
+        <div class="flex items-center gap-3 mb-10 px-2">
+            <div id="sidebarLogo" class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                <i class="fas fa-shield-halved text-white text-sm"></i>
+            </div>
+            <span class="font-bold text-xl tracking-tight">SGFRP</span>
+        </div>
+
+        <div class="mb-8">
+            <p class="text-[10px] uppercase tracking-widest text-gray-500 mb-4 px-2 font-bold">Workspace</p>
+            <div class="server-selector">
+                <span class="text-sm font-medium">Main Server</span>
+                <i class="fas fa-chevron-down text-[10px] text-gray-500"></i>
+            </div>
+        </div>
+
+        <nav class="flex-1 space-y-1">
+            <p class="text-[10px] uppercase tracking-widest text-gray-500 mb-2 mt-6 px-2 font-bold">Management</p>
+            <a class="nav-link active" onclick="showPage('dashboard')">
+                <i class="fas fa-chart-pie w-5"></i> Dashboard
+            </a>
+            <a class="nav-link" onclick="showPage('verification')">
+                <i class="fas fa-user-check w-5"></i> Verification
+            </a>
+            <a class="nav-link" onclick="showPage('reports')">
+                <i class="fas fa-file-shield w-5"></i> Report Logs
+            </a>
+
+            <p class="text-[10px] uppercase tracking-widest text-gray-500 mb-2 mt-8 px-2 font-bold">Advanced</p>
+            <a class="nav-link" onclick="showPage('settings')">
+                <i class="fas fa-robot w-5"></i> Bot Settings
+            </a>
+            <a class="nav-link" onclick="showPage('database')">
+                <i class="fas fa-database w-5"></i> Database
+            </a>
+        </nav>
+
+        <div class="mt-auto pt-6 border-t border-[#1a1a1a]">
+            <div class="flex items-center justify-between gap-3 px-2">
+                <div class="user-info">
+                    <img id="userAvatar" class="avatar" src="" alt="Avatar">
+                    <div class="text-xs">
+                        <p class="font-bold text-white" id="userName">Admin Staff</p>
+                        <p class="text-gray-500" id="userEmail"></p>
+                    </div>
+                </div>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <main class="flex-1 overflow-y-auto p-12">
+        <!-- Dashboard Page -->
+        <div id="dashboardPage">
+            <div class="flex justify-between items-start mb-12">
+                <div>
+                    <p class="text-blue-500 uppercase text-xs font-bold tracking-widest mb-2">Management</p>
+                    <h1 class="text-4xl font-bold">Dashboard</h1>
+                    <p class="text-gray-400 mt-2">Monitor and manage user reports and verification logs.</p>
+                </div>
+                <button class="btn-blue px-6 py-2.5 rounded-lg font-bold text-sm flex items-center gap-2" onclick="refreshData()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </div>
+
+            <div class="grid grid-cols-3 gap-6 mb-12">
+                <div class="card p-6">
+                    <p class="text-gray-500 text-xs font-bold uppercase mb-2">Verified Users</p>
+                    <h2 class="text-3xl font-bold" id="verifiedCount">0</h2>
+                </div>
+                <div class="card p-6 border-l-4 border-l-blue-600">
+                    <p class="text-gray-500 text-xs font-bold uppercase mb-2">Pending Review</p>
+                    <h2 class="text-3xl font-bold text-blue-500" id="pendingCount">0</h2>
+                </div>
+                <div class="card p-6">
+                    <p class="text-gray-500 text-xs font-bold uppercase mb-2">Total Cases</p>
+                    <h2 class="text-3xl font-bold" id="totalReports">0</h2>
+                </div>
+            </div>
+
+            <div class="card overflow-hidden">
+                <div class="p-6 border-b border-[#1a1a1a] flex items-center justify-between bg-[#0a0a0a]">
+                    <h3 class="font-bold">Recent Report Activity</h3>
+                    <i class="fas fa-ellipsis-h text-gray-600"></i>
+                </div>
+                <div id="reportsTable">
+                    <div class="loading">Loading reports...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Verification Page -->
+        <div id="verificationPage" style="display: none;">
+            <div class="flex justify-between items-start mb-12">
+                <div>
+                    <p class="text-blue-500 uppercase text-xs font-bold tracking-widest mb-2">Verification</p>
+                    <h1 class="text-4xl font-bold">Verified Users</h1>
+                    <p class="text-gray-400 mt-2">Manage and monitor verified users.</p>
+                </div>
+                <button class="btn-blue px-6 py-2.5 rounded-lg font-bold text-sm flex items-center gap-2" onclick="refreshVerification()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </div>
+
+            <div class="card overflow-hidden">
+                <div class="p-6 border-b border-[#1a1a1a] bg-[#0a0a0a]">
+                    <h3 class="font-bold">Verified Users List</h3>
+                </div>
+                <div id="verificationTable">
+                    <div class="loading">Loading verified users...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports Page -->
+        <div id="reportsPage" style="display: none;">
+            <div class="flex justify-between items-start mb-12">
+                <div>
+                    <p class="text-blue-500 uppercase text-xs font-bold tracking-widest mb-2">Reports</p>
+                    <h1 class="text-4xl font-bold">All Reports</h1>
+                    <p class="text-gray-400 mt-2">View all report cases and their status.</p>
+                </div>
+                <button class="btn-blue px-6 py-2.5 rounded-lg font-bold text-sm flex items-center gap-2" onclick="refreshAllReports()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </div>
+
+            <div class="card overflow-hidden">
+                <div class="p-6 border-b border-[#1a1a1a] bg-[#0a0a0a]">
+                    <h3 class="font-bold">All Reports</h3>
+                </div>
+                <div id="allReportsTable">
+                    <div class="loading">Loading reports...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Page -->
+        <div id="settingsPage" style="display: none;">
+            <div class="flex justify-between items-start mb-12">
+                <div>
+                    <p class="text-blue-500 uppercase text-xs font-bold tracking-widest mb-2">Settings</p>
+                    <h1 class="text-4xl font-bold">Bot Settings</h1>
+                    <p class="text-gray-400 mt-2">Configure bot behavior and preferences.</p>
+                </div>
+            </div>
+
+            <div class="card p-6 mb-6">
+                <h3 class="font-bold mb-4">Custom Logo</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-sm text-gray-400 block mb-2">Logo Image URL</label>
+                        <input type="text" id="logoUrl" class="w-full bg-[#111] border border-[#222] rounded-lg px-4 py-2 text-white" placeholder="https://example.com/logo.png">
+                        <p class="text-xs text-gray-500 mt-1">Enter a direct image URL (PNG, JPG, or GIF recommended)</p>
+                    </div>
+                    <button class="btn-blue px-6 py-2 rounded-lg text-sm font-bold" onclick="updateLogo()">Update Logo</button>
+                </div>
+            </div>
+
+            <div class="card p-6 mb-6">
+                <h3 class="font-bold mb-4">API Configuration</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-sm text-gray-400 block mb-2">Bot API Endpoint</label>
+                        <input type="text" id="apiEndpoint" class="w-full bg-[#111] border border-[#222] rounded-lg px-4 py-2 text-white" placeholder="https://esreport.pella.sh/api/dashboard">
+                        <p class="text-xs text-gray-500 mt-1">Your Pella bot's API endpoint</p>
+                    </div>
+                    <div>
+                        <label class="text-sm text-gray-400 block mb-2">Auto Refresh Interval (seconds)</label>
+                        <input type="number" id="refreshInterval" class="w-32 bg-[#111] border border-[#222] rounded-lg px-4 py-2 text-white" value="30">
+                    </div>
+                    <button class="btn-blue px-6 py-2 rounded-lg text-sm font-bold" onclick="saveSettings()">Save Settings</button>
+                </div>
+            </div>
+
+            <div class="card p-6">
+                <h3 class="font-bold mb-4">About</h3>
+                <p class="text-gray-400 text-sm">ESMT Report Bot v1.0</p>
+                <p class="text-gray-500 text-xs mt-2">Manage reports and user verification seamlessly.</p>
+            </div>
+        </div>
+
+        <!-- Database Page -->
+        <div id="databasePage" style="display: none;">
+            <div class="flex justify-between items-start mb-12">
+                <div>
+                    <p class="text-blue-500 uppercase text-xs font-bold tracking-widest mb-2">Database</p>
+                    <h1 class="text-4xl font-bold">Database Stats</h1>
+                    <p class="text-gray-400 mt-2">View database statistics and information.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-6 mb-12">
+                <div class="card p-6">
+                    <p class="text-gray-500 text-xs font-bold uppercase mb-2">Total Reports</p>
+                    <h2 class="text-3xl font-bold" id="dbTotalReports">0</h2>
+                </div>
+                <div class="card p-6">
+                    <p class="text-gray-500 text-xs font-bold uppercase mb-2">Verified Users</p>
+                    <h2 class="text-3xl font-bold" id="dbVerifiedUsers">0</h2>
+                </div>
+            </div>
+
+            <div class="card p-6">
+                <h3 class="font-bold mb-4">Database Information</h3>
+                <div class="space-y-2 text-sm">
+                    <p><span class="text-gray-500">Status:</span> <span class="text-green-500">● Online</span></p>
+                    <p><span class="text-gray-500">Type:</span> SQLite</p>
+                    <p><span class="text-gray-500">Last Sync:</span> <span id="lastSync">-</span></p>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+    // CHANGE THIS PASSWORD - This is your site access password
+    const SITE_PASSWORD = 'SGFRP2024';
+    
+    // Configuration
+    const CLIENT_ID = '1494268332336222378';
+    // IMPORTANT: Change this to your GitHub Pages URL after deployment
+    const REDIRECT_URI = window.location.origin + '/';
+    
+    let currentUser = null;
+    let API_URL = localStorage.getItem('apiEndpoint') || 'https://esreport.pella.sh/api/dashboard';
+    let refreshInterval = parseInt(localStorage.getItem('refreshInterval')) || 30;
+    let autoRefreshTimer = null;
+    
+    // Password protection
+    function checkPassword() {
+        const password = document.getElementById('passwordInput').value;
+        if (password === SITE_PASSWORD) {
+            localStorage.setItem('sgfrp_auth', 'true');
+            document.getElementById('passwordOverlay').style.display = 'none';
+            document.getElementById('loginPage').style.display = 'flex';
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('passwordError').innerHTML = '';
+        } else {
+            document.getElementById('passwordError').innerHTML = 'Incorrect password. Access denied.';
+            document.getElementById('passwordInput').value = '';
+        }
+    }
+    
+    // Check if already authenticated
+    if (localStorage.getItem('sgfrp_auth') === 'true') {
+        document.getElementById('passwordOverlay').style.display = 'none';
+        document.getElementById('loginPage').style.display = 'flex';
+    }
+    
+    // Handle Enter key on password input
+    document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') checkPassword();
+    });
+    
+    // Check URL for OAuth callback (GitHub Pages doesn't support backend, so we use localStorage)
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+    
+    if (code) {
+        // For GitHub Pages, we need to use a proxy or backend service
+        // Since GitHub Pages is static, we'll use a simple approach:
+        // Store the code and redirect to login page
+        localStorage.setItem('oauth_code', code);
+        window.location.href = window.location.pathname;
+    }
+    
+    // Check for stored OAuth code
+    const storedCode = localStorage.getItem('oauth_code');
+    if (storedCode && !currentUser) {
+        // You'll need a backend service to exchange the code
+        // For now, we'll use a manual verification method
+        console.log('OAuth code found. You need a backend service to exchange it.');
+        // Remove the code after attempting
+        localStorage.removeItem('oauth_code');
+    }
+    
+    // For GitHub Pages, we'll use a simple admin whitelist approach
+    // Add your Discord user IDs here for access
+    const ALLOWED_USER_IDS = [
+        '1252174197816561705',  // Your Discord ID
+        '988602958688165899',
+        '962798587434139671',
+        '1341107498358149177'
+    ];
+    
+    function loginWithDiscord() {
+        // Since GitHub Pages can't handle OAuth callback properly,
+        // we'll use a manual verification method
+        const manualCode = prompt('Enter your admin access code:');
+        if (manualCode === 'SGFRP_ADMIN_2024') {
+            // Simulate login
+            currentUser = {
+                id: '1252174197816561705',
+                username: 'Admin',
+                email: 'admin@sgrp.com',
+                avatar: null,
+                discriminator: '0'
+            };
+            localStorage.setItem('sgfrp_user', JSON.stringify(currentUser));
+            showMainApp();
+        } else {
+            alert('Invalid access code');
+        }
+    }
+    
+    // Alternative: Use a simple username/password for demo
+    function simpleLogin() {
+        const username = prompt('Enter username:');
+        const password = prompt('Enter password:');
+        if (username === 'admin' && password === 'SGFRP2024') {
+            currentUser = {
+                id: '1252174197816561705',
+                username: 'Admin',
+                email: 'admin@sgrp.com'
+            };
+            localStorage.setItem('sgfrp_user', JSON.stringify(currentUser));
+            showMainApp();
+        } else {
+            alert('Invalid credentials');
+        }
+    }
+    
+    function logout() {
+        localStorage.removeItem('sgfrp_user');
+        currentUser = null;
+        document.getElementById('loginPage').style.display = 'flex';
+        document.getElementById('mainApp').style.display = 'none';
+    }
+    
+    function showLoginPage() {
+        document.getElementById('loginPage').style.display = 'flex';
+        document.getElementById('mainApp').style.display = 'none';
+    }
+    
+    function showMainApp() {
+        document.getElementById('loginPage').style.display = 'none';
+        document.getElementById('mainApp').style.display = 'flex';
+        
+        if (currentUser) {
+            document.getElementById('userName').innerText = currentUser.username;
+            document.getElementById('userEmail').innerText = currentUser.email || '';
+            const defaultAvatar = `https://cdn.discordapp.com/embed/avatars/0.png`;
+            document.getElementById('userAvatar').src = defaultAvatar;
+        }
+        
+        loadLogo();
+        loadSettings();
+        fetchDashboardData();
+        startAutoRefresh();
+    }
+    
+    function loadLogo() {
+        const savedLogo = localStorage.getItem('sgfrp_logo');
+        const sidebarLogo = document.getElementById('sidebarLogo');
+        const loginLogo = document.getElementById('customLoginLogo');
+        const passwordLogo = document.getElementById('passwordLogo');
+        
+        if (savedLogo && savedLogo !== '') {
+            sidebarLogo.innerHTML = `<img src="${savedLogo}" class="custom-logo-img" alt="Logo">`;
+            loginLogo.innerHTML = `<img src="${savedLogo}" style="width: 60px; height: 60px; border-radius: 15px; object-fit: cover;" alt="Logo">`;
+            passwordLogo.innerHTML = `<img src="${savedLogo}" style="width: 40px; height: 40px; border-radius: 10px; object-fit: cover;" alt="Logo">`;
+        } else {
+            sidebarLogo.innerHTML = '<i class="fas fa-shield-halved text-white text-sm"></i>';
+            loginLogo.innerHTML = '<i class="fas fa-shield-halved"></i>';
+            passwordLogo.innerHTML = '<i class="fas fa-lock"></i>';
+        }
+    }
+    
+    function updateLogo() {
+        const logoUrl = document.getElementById('logoUrl').value;
+        if (logoUrl) {
+            localStorage.setItem('sgfrp_logo', logoUrl);
+            loadLogo();
+            alert('Logo updated!');
+        } else {
+            localStorage.removeItem('sgfrp_logo');
+            loadLogo();
+            alert('Logo removed. Default restored.');
+        }
+    }
+    
+    function showPage(page) {
+        document.querySelectorAll('[id$="Page"]').forEach(el => el.style.display = 'none');
+        document.getElementById(`${page}Page`).style.display = 'block';
+        
+        document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+        event.target.classList.add('active');
+        
+        if (page === 'dashboard') fetchDashboardData();
+        else if (page === 'verification') fetchVerificationData();
+        else if (page === 'reports') fetchAllReports();
+        else if (page === 'database') fetchDatabaseStats();
+    }
+    
+    async function fetchDashboardData() {
+        try {
+            const response = await fetch(API_URL);
+            const data = await response.json();
+            
+            document.getElementById('verifiedCount').innerText = data.stats.verified || 0;
+            document.getElementById('pendingCount').innerText = data.stats.pending || 0;
+            document.getElementById('totalReports').innerText = data.stats.total || 0;
+            
+            if (data.reports && data.reports.length > 0) {
+                let html = '<table><thead><tr><th>Case ID</th><th>Reporter</th><th>Reported User</th><th>Type</th><th>Status</th></tr></thead><tbody>';
+                for (const report of data.reports.slice(0, 10)) {
+                    const badgeClass = report.report_type === 'roblox' ? 'badge-roblox' : 'badge-discord';
+                    const badgeText = report.report_type === 'roblox' ? 'ROBLOX' : 'DISCORD';
+                    const statusText = report.status.charAt(0).toUpperCase() + report.status.slice(1);
+                    html += `<tr><td class="font-mono text-blue-400">${report.case_id}</td><td>${escapeHtml(report.reporter_name)}</td><td>${escapeHtml(report.reported_user)}</td><td><span class="${badgeClass}">${badgeText}</span></td><td class="status-${report.status}">${statusText}</td></tr>`;
+                }
+                html += '</tbody></table>';
+                document.getElementById('reportsTable').innerHTML = html;
+            } else {
+                document.getElementById('reportsTable').innerHTML = '<div class="loading">No reports found.</div>';
+            }
+        } catch (error) {
+            document.getElementById('reportsTable').innerHTML = '<div class="loading">Error loading data. Make sure your bot is running.</div>';
+        }
+    }
+    
+    async function fetchVerificationData() {
+        try {
+            const response = await fetch(API_URL);
+            const data = await response.json();
+            
+            if (data.verified_users && data.verified_users.length > 0) {
+                let html = '<tr><thead><tr><th>Avatar</th><th>User ID</th><th>Username</th><th>Verified At</th><th>Method</th></tr></thead><tbody>';
+                for (const user of data.verified_users) {
+                    const avatarUrl = `https://cdn.discordapp.com/embed/avatars/${parseInt(user.user_id) % 5}.png`;
+                    html += `<tr><td><img class="avatar" src="${avatarUrl}" style="width: 32px; height: 32px;"></td><td class="font-mono">${user.user_id}</td><td>${escapeHtml(user.username)}</td><td>${user.verified_at ? user.verified_at.substring(0, 10) : '-'}</td><td><span class="badge-discord">${user.method || 'OAuth'}</span></td></tr>`;
+                }
+                html += '</tbody></table>';
+                document.getElementById('verificationTable').innerHTML = html;
+            } else {
+                document.getElementById('verificationTable').innerHTML = '<div class="loading">No verified users found.</div>';
+            }
+        } catch (error) {
+            document.getElementById('verificationTable').innerHTML = '<div class="loading">Error loading data.</div>';
+        }
+    }
+    
+    async function fetchAllReports() {
+        try {
+            const response = await fetch(API_URL);
+            const data = await response.json();
+            
+            if (data.reports && data.reports.length > 0) {
+                let html = '<table><thead><tr><th>Case ID</th><th>Reporter</th><th>Reported User</th><th>Reason</th><th>Type</th><th>Status</th><th>Date</th></tr></thead><tbody>';
+                for (const report of data.reports) {
+                    const badgeClass = report.report_type === 'roblox' ? 'badge-roblox' : 'badge-discord';
+                    const badgeText = report.report_type === 'roblox' ? 'ROBLOX' : 'DISCORD';
+                    const statusText = report.status.charAt(0).toUpperCase() + report.status.slice(1);
+                    html += `<tr><td class="font-mono text-blue-400">${report.case_id}</td><td>${escapeHtml(report.reporter_name)}</td><td>${escapeHtml(report.reported_user)}</td><td>${escapeHtml(report.reason.substring(0, 50))}${report.reason.length > 50 ? '...' : ''}</td><td><span class="${badgeClass}">${badgeText}</span></td><td class="status-${report.status}">${statusText}</td><td>${report.created_at ? report.created_at.substring(0, 10) : '-'}</td></tr>`;
+                }
+                html += '</tbody></table>';
+                document.getElementById('allReportsTable').innerHTML = html;
+            } else {
+                document.getElementById('allReportsTable').innerHTML = '<div class="loading">No reports found.</div>';
+            }
+        } catch (error) {
+            document.getElementById('allReportsTable').innerHTML = '<div class="loading">Error loading data.</div>';
+        }
+    }
+    
+    async function fetchDatabaseStats() {
+        try {
+            const response = await fetch(API_URL);
+            const data = await response.json();
+            document.getElementById('dbTotalReports').innerText = data.stats.total || 0;
+            document.getElementById('dbVerifiedUsers').innerText = data.stats.verified || 0;
+            document.getElementById('lastSync').innerText = new Date().toLocaleString();
+        } catch (error) {}
+    }
+    
+    function refreshData() { fetchDashboardData(); }
+    function refreshVerification() { fetchVerificationData(); }
+    function refreshAllReports() { fetchAllReports(); }
+    
+    function saveSettings() {
+        const newEndpoint = document.getElementById('apiEndpoint').value;
+        const newInterval = parseInt(document.getElementById('refreshInterval').value);
+        if (newEndpoint) {
+            API_URL = newEndpoint;
+            localStorage.setItem('apiEndpoint', newEndpoint);
+        }
+        if (newInterval && newInterval > 0) {
+            refreshInterval = newInterval;
+            localStorage.setItem('refreshInterval', newInterval);
+            if (autoRefreshTimer) {
+                clearInterval(autoRefreshTimer);
+                startAutoRefresh();
+            }
+        }
+        alert('Settings saved!');
+        fetchDashboardData();
+    }
+    
+    function loadSettings() {
+        document.getElementById('apiEndpoint').value = API_URL;
+        document.getElementById('refreshInterval').value = refreshInterval;
+        const savedLogo = localStorage.getItem('sgfrp_logo');
+        if (savedLogo) document.getElementById('logoUrl').value = savedLogo;
+    }
+    
+    function startAutoRefresh() {
+        if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+        autoRefreshTimer = setInterval(() => {
+            const currentPage = document.querySelector('[id$="Page"]:not([style*="display: none"])');
+            if (currentPage && currentPage.id === 'dashboardPage') fetchDashboardData();
+        }, refreshInterval * 1000);
+    }
+    
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    
+    // Check if already logged in
+    const savedUser = localStorage.getItem('sgfrp_user');
+    if (savedUser && localStorage.getItem('sgfrp_auth') === 'true') {
+        currentUser = JSON.parse(savedUser);
+        showMainApp();
+    }
+</script>
+
+</body>
+</html>
