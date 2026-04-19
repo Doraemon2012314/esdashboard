@@ -6,6 +6,9 @@
     <title>SGFRP | Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/12.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore-compat.js"></script>
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
         body{background-color:#050505;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',sans-serif}
@@ -38,34 +41,6 @@
         p{color:#6b7280;font-size:14px}
         .refresh-indicator{position:fixed;bottom:20px;right:20px;background:#0d0d0d;border:1px solid #1a1a1a;border-radius:8px;padding:8px 16px;font-size:12px;color:#6b7280;z-index:1000}
     </style>
-    <!-- Firebase SDK -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-        import { getFirestore, collection, query, orderBy, limit, getDocs, where } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
-        
-        const firebaseConfig = {
-            apiKey: "AIzaSyAYzKpKuOhtgvjbrs0h6OHUkTpbewYSVXg",
-            authDomain: "esdashboard-7b2e7.firebaseapp.com",
-            projectId: "esdashboard-7b2e7",
-            storageBucket: "esdashboard-7b2e7.firebasestorage.app",
-            messagingSenderId: "372437271",
-            appId: "1:372437271:web:0a5a9dc731fe4e7c8cc752"
-        };
-        
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        
-        // Make db available globally
-        window.db = db;
-        window.getDocs = getDocs;
-        window.collection = collection;
-        window.query = query;
-        window.orderBy = orderBy;
-        window.limit = limit;
-        window.where = where;
-        
-        console.log("Firebase initialized");
-    </script>
 </head>
 <body>
 
@@ -232,19 +207,13 @@
             </div>
 
             <div class="card p-6 mb-6">
-                <h3 class="font-bold mb-4">API Configuration</h3>
-                <div class="space-y-4">
-                    <div>
-                        <label class="text-sm text-gray-400 block mb-2">Data Source</label>
-                        <p class="text-sm text-green-500">✓ Firebase Connected</p>
-                        <p class="text-xs text-gray-500 mt-1">Data is being read directly from Firebase Firestore</p>
-                    </div>
-                    <div>
-                        <label class="text-sm text-gray-400 block mb-2">Auto Refresh Interval (seconds)</label>
-                        <input type="number" id="refreshInterval" class="w-32 bg-[#111] border border-[#222] rounded-lg px-4 py-2 text-white" value="30">
-                    </div>
-                    <button class="btn-blue px-6 py-2 rounded-lg text-sm font-bold" onclick="saveSettings()">Save Settings</button>
+                <h3 class="font-bold mb-4">Data Source</h3>
+                <p class="text-sm text-green-500">✓ Firebase Firestore Connected</p>
+                <div class="mt-4">
+                    <label class="text-sm text-gray-400 block mb-2">Auto Refresh Interval (seconds)</label>
+                    <input type="number" id="refreshInterval" class="w-32 bg-[#111] border border-[#222] rounded-lg px-4 py-2 text-white" value="30">
                 </div>
+                <button class="btn-blue mt-4 px-6 py-2 rounded-lg text-sm font-bold" onclick="saveSettings()">Save Settings</button>
             </div>
 
             <div class="card p-6">
@@ -289,10 +258,23 @@
 
 <div class="refresh-indicator" id="refreshIndicator">Auto-refresh: ON</div>
 
-<script type="module">
-    // Discord OAuth2 Configuration
+<script>
+    // Initialize Firebase
+    const firebaseConfig = {
+        apiKey: "AIzaSyAYzKpKuOhtgvjbrs0h6OHUkTpbewYSVXg",
+        authDomain: "esdashboard-7b2e7.firebaseapp.com",
+        projectId: "esdashboard-7b2e7",
+        storageBucket: "esdashboard-7b2e7.firebasestorage.app",
+        messagingSenderId: "372437271",
+        appId: "1:372437271:web:0a5a9dc731fe4e7c8cc752"
+    };
+    
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    
+    // Discord OAuth2 Configuration - Automatically uses current URL
     const CLIENT_ID = '1494268332336222378';
-    const REDIRECT_URI = 'https://esdashboard.vercel.app';
+    const REDIRECT_URI = window.location.origin;
     
     let currentUser = null;
     let refreshInterval = parseInt(localStorage.getItem('refreshInterval')) || 30;
@@ -382,26 +364,14 @@
         else if (page === 'database') fetchDatabaseStats();
     }
     
-    // Firebase data fetching functions
     async function fetchDashboardData() {
         try {
-            const reportsQuery = query(collection(window.db, 'reports'), orderBy('created_at', 'desc'), limit(20));
-            const reportsSnapshot = await getDocs(reportsQuery);
-            
-            const verifiedQuery = query(collection(window.db, 'verified_users'), where('verified', '==', true));
-            const verifiedSnapshot = await getDocs(verifiedQuery);
-            
-            const allReportsQuery = query(collection(window.db, 'reports'));
-            const allReportsSnapshot = await getDocs(allReportsQuery);
-            
-            const pendingQuery = query(collection(window.db, 'reports'), where('status', '==', 'pending'));
-            const pendingSnapshot = await getDocs(pendingQuery);
-            
-            const acceptedQuery = query(collection(window.db, 'reports'), where('status', '==', 'accepted'));
-            const acceptedSnapshot = await getDocs(acceptedQuery);
-            
-            const deniedQuery = query(collection(window.db, 'reports'), where('status', '==', 'denied'));
-            const deniedSnapshot = await getDocs(deniedQuery);
+            const reportsSnapshot = await db.collection('reports').orderBy('created_at', 'desc').limit(20).get();
+            const verifiedSnapshot = await db.collection('verified_users').where('verified', '==', true).get();
+            const allReportsSnapshot = await db.collection('reports').get();
+            const pendingSnapshot = await db.collection('reports').where('status', '==', 'pending').get();
+            const acceptedSnapshot = await db.collection('reports').where('status', '==', 'accepted').get();
+            const deniedSnapshot = await db.collection('reports').where('status', '==', 'denied').get();
             
             const total = allReportsSnapshot.size;
             const pending = pendingSnapshot.size;
@@ -413,10 +383,9 @@
             document.getElementById('pendingCount').innerText = pending;
             document.getElementById('totalReports').innerText = total;
             
-            // Build reports table
             let html = '<table><thead><tr><th>Case ID</th><th>Reporter</th><th>Reported User</th><th>Type</th><th>Status</th></tr></thead><tbody>';
             
-            for (const doc of reportsSnapshot.docs) {
+            reportsSnapshot.forEach(doc => {
                 const report = doc.data();
                 const badgeClass = report.report_type === 'roblox' ? 'badge-roblox' : 'badge-discord';
                 const badgeText = report.report_type === 'roblox' ? 'ROBLOX' : 'DISCORD';
@@ -429,25 +398,24 @@
                     <td><span class="${badgeClass}">${badgeText}</span></td>
                     <td class="status-${report.status}">${statusText}</td>
                 </tr>`;
-            }
+            });
             
             html += '</tbody></table>';
             document.getElementById('reportsTable').innerHTML = html;
             
         } catch (error) {
             console.error('Error fetching data:', error);
-            document.getElementById('reportsTable').innerHTML = '<div class="loading">Error loading data from Firebase. Make sure your bot is running.</div>';
+            document.getElementById('reportsTable').innerHTML = '<div class="loading">Error loading data from Firebase. Make sure your bot is running and has written data to Firestore.</div>';
         }
     }
     
     async function fetchVerificationData() {
         try {
-            const verifiedQuery = query(collection(window.db, 'verified_users'), where('verified', '==', true));
-            const verifiedSnapshot = await getDocs(verifiedQuery);
+            const verifiedSnapshot = await db.collection('verified_users').where('verified', '==', true).get();
             
             let html = '<table><thead><tr><th>Avatar</th><th>User ID</th><th>Username</th><th>Verified At</th><th>Method</th></tr></thead><tbody>';
             
-            for (const doc of verifiedSnapshot.docs) {
+            verifiedSnapshot.forEach(doc => {
                 const user = doc.data();
                 const avatarUrl = `https://cdn.discordapp.com/embed/avatars/${parseInt(user.user_id) % 5}.png`;
                 
@@ -458,7 +426,7 @@
                     <td>${user.verified_at ? user.verified_at.substring(0, 10) : '-'}</td>
                     <td><span class="badge-discord">${user.verification_method || 'OAuth'}</span></td>
                 </tr>`;
-            }
+            });
             
             html += '</tbody></table>';
             document.getElementById('verificationTable').innerHTML = html;
@@ -471,12 +439,11 @@
     
     async function fetchAllReports() {
         try {
-            const reportsQuery = query(collection(window.db, 'reports'), orderBy('created_at', 'desc'));
-            const reportsSnapshot = await getDocs(reportsQuery);
+            const reportsSnapshot = await db.collection('reports').orderBy('created_at', 'desc').get();
             
             let html = '<table><thead><tr><th>Case ID</th><th>Reporter</th><th>Reported User</th><th>Reason</th><th>Type</th><th>Status</th><th>Date</th></tr></thead><tbody>';
             
-            for (const doc of reportsSnapshot.docs) {
+            reportsSnapshot.forEach(doc => {
                 const report = doc.data();
                 const badgeClass = report.report_type === 'roblox' ? 'badge-roblox' : 'badge-discord';
                 const badgeText = report.report_type === 'roblox' ? 'ROBLOX' : 'DISCORD';
@@ -491,7 +458,7 @@
                     <td class="status-${report.status}">${statusText}</td>
                     <td>${report.created_at ? report.created_at.substring(0, 10) : '-'}</td>
                 </tr>`;
-            }
+            });
             
             html += '</tbody></table>';
             document.getElementById('allReportsTable').innerHTML = html;
@@ -504,11 +471,8 @@
     
     async function fetchDatabaseStats() {
         try {
-            const reportsQuery = query(collection(window.db, 'reports'));
-            const reportsSnapshot = await getDocs(reportsQuery);
-            
-            const verifiedQuery = query(collection(window.db, 'verified_users'), where('verified', '==', true));
-            const verifiedSnapshot = await getDocs(verifiedQuery);
+            const reportsSnapshot = await db.collection('reports').get();
+            const verifiedSnapshot = await db.collection('verified_users').where('verified', '==', true).get();
             
             document.getElementById('dbTotalReports').innerText = reportsSnapshot.size;
             document.getElementById('dbVerifiedUsers').innerText = verifiedSnapshot.size;
