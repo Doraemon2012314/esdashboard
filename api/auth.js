@@ -22,7 +22,7 @@ exports.handler = async (event, context) => {
     
     const CLIENT_ID = '1494268332336222378';
     const CLIENT_SECRET = 'VLYIl_i-AD5C7FBdKIQM64tNUGrPV49N';
-    const REDIRECT_URI = 'https://esmodweb.netlify.app';
+    const REDIRECT_URI = 'https://esmoddashboard.netlify.app/';
     
     try {
         const params = new URLSearchParams({
