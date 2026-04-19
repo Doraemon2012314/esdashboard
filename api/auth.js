@@ -7,26 +7,34 @@ export default async function handler(req, res) {
     
     const CLIENT_ID = '1494268332336222378';
     const CLIENT_SECRET = 'VLYIl_i-AD5C7FBdKIQM64tNUGrPV49N';
-    // Use environment variable for redirect URI
-    const REDIRECT_URI = process.env.REDIRECT_URI || 'https://esdashboard-rjkh0fg57-nexustechnologies.vercel.app';
+    // MUST MATCH DISCORD EXACTLY
+    const REDIRECT_URI = 'https://esdashboard-f70c3p6d1-nexustechnologies.vercel.app';
     
     try {
+        const params = new URLSearchParams({
+            client_id: CLIENT_ID,
+            client_secret: CLIENT_SECRET,
+            grant_type: 'authorization_code',
+            code: code,
+            redirect_uri: REDIRECT_URI
+        });
+        
+        console.log('Sending request to Discord with:', params.toString());
+        
         const tokenResponse = await fetch('https://discord.com/api/oauth2/token', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams({
-                client_id: CLIENT_ID,
-                client_secret: CLIENT_SECRET,
-                grant_type: 'authorization_code',
-                code: code,
-                redirect_uri: REDIRECT_URI
-            })
+            headers: { 
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: params
         });
         
         const tokenData = await tokenResponse.json();
         
+        console.log('Discord response:', tokenData);
+        
         if (!tokenData.access_token) {
-            return res.status(400).json({ error: 'Failed to get access token' });
+            return res.status(400).json({ error: 'Failed to get access token', discord_error: tokenData });
         }
         
         const userResponse = await fetch('https://discord.com/api/users/@me', {
