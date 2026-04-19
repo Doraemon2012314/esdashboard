@@ -1,5 +1,4 @@
 exports.handler = async (event, context) => {
-    // Enable CORS
     const headers = {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': 'Content-Type',
@@ -22,38 +21,36 @@ exports.handler = async (event, context) => {
     
     const CLIENT_ID = '1494268332336222378';
     const CLIENT_SECRET = 'VLYIl_i-AD5C7FBdKIQM64tNUGrPV49N';
-    const REDIRECT_URI = 'https://esmoddashboard.netlify.app/';
+    const REDIRECT_URI = 'https://esmoddashboard.netlify.app';
     
     try {
-        const params = new URLSearchParams({
-            client_id: CLIENT_ID,
-            client_secret: CLIENT_SECRET,
-            grant_type: 'authorization_code',
-            code: code,
-            redirect_uri: REDIRECT_URI
-        });
-        
-        const tokenResponse = await fetch('https://discord.com/api/oauth2/token', {
+        const response = await fetch('https://discord.com/api/oauth2/token', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: params
+            body: new URLSearchParams({
+                client_id: CLIENT_ID,
+                client_secret: CLIENT_SECRET,
+                grant_type: 'authorization_code',
+                code: code,
+                redirect_uri: REDIRECT_URI
+            })
         });
         
-        const tokenData = await tokenResponse.json();
+        const data = await response.json();
         
-        if (!tokenData.access_token) {
+        if (!data.access_token) {
             return {
                 statusCode: 400,
                 headers,
-                body: JSON.stringify({ error: 'Failed to get access token', discord_error: tokenData })
+                body: JSON.stringify({ error: 'Failed to get access token', details: data })
             };
         }
         
-        const userResponse = await fetch('https://discord.com/api/users/@me', {
-            headers: { Authorization: `Bearer ${tokenData.access_token}` }
+        const userRes = await fetch('https://discord.com/api/users/@me', {
+            headers: { Authorization: `Bearer ${data.access_token}` }
         });
         
-        const userData = await userResponse.json();
+        const userData = await userRes.json();
         
         return {
             statusCode: 200,
@@ -62,7 +59,6 @@ exports.handler = async (event, context) => {
         };
         
     } catch (error) {
-        console.error('OAuth error:', error);
         return {
             statusCode: 500,
             headers,
