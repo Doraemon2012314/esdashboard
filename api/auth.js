@@ -18,7 +18,7 @@ export default async function handler(req, res) {
     
     const CLIENT_ID = '1494268332336222378';
     const CLIENT_SECRET = 'VLYIl_i-AD5C7FBdKIQM64tNUGrPV49N';
-    const REDIRECT_URI = process.env.REDIRECT_URI || 'https://esdashboard-3s89i57ab-nexustechnologies.vercel.app/';
+    const REDIRECT_URI = process.env.REDIRECT_URI || 'https://esdashboard-3s89i57ab-nexustechnologies.vercel.app';
     
     try {
         // Exchange code for token
