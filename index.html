@@ -272,9 +272,9 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     
-    // Discord OAuth2 Configuration - Automatically uses current URL
+    // Discord OAuth2 Configuration
     const CLIENT_ID = '1494268332336222378';
-    const REDIRECT_URI = window.location.origin;
+    const REDIRECT_URI = 'https://esmodweb.netlify.app';
     
     let currentUser = null;
     let refreshInterval = parseInt(localStorage.getItem('refreshInterval')) || 30;
@@ -315,12 +315,10 @@
         }
     }
     
-    
     function loginWithDiscord() {
-    const REDIRECT_URI = 'https://esdashboard-f70c3p6d1-nexustechnologies.vercel.app';
-    const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=identify email&prompt=consent`;
-    window.location.href = authUrl;
-}
+        const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=identify email&prompt=consent`;
+        window.location.href = authUrl;
+    }
     
     function logout() {
         localStorage.removeItem('sgfrp_user');
@@ -443,7 +441,7 @@
         try {
             const reportsSnapshot = await db.collection('reports').orderBy('created_at', 'desc').get();
             
-            let html = '<table><thead><tr><th>Case ID</th><th>Reporter</th><th>Reported User</th><th>Reason</th><th>Type</th><th>Status</th><th>Date</th></tr></thead><tbody>';
+            let html = '</table><thead><tr><th>Case ID</th><th>Reporter</th><th>Reported User</th><th>Reason</th><th>Type</th><th>Status</th><th>Date</th></tr></thead><tbody>';
             
             reportsSnapshot.forEach(doc => {
                 const report = doc.data();
