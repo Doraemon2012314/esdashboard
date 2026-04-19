@@ -202,7 +202,7 @@
 <!-- Login Page -->
 <div id="loginPage" class="login-container">
     <div class="login-card">
-        <h1>SGFRP Management</h1>
+        <h1>SGFRP X ESMT Dashboard (In dev lol)</h1>
         <p>Sign in with Discord to continue</p>
         <button class="discord-login-btn" onclick="loginWithDiscord()">
             <i class="fab fa-discord"></i> Login with Discord
@@ -421,8 +421,7 @@
 <script>
     // Discord OAuth2 Configuration
     const CLIENT_ID = '1494268332336222378';
-    // IMPORTANT: Change this to your actual domain
-    const REDIRECT_URI = window.location.origin + window.location.pathname;
+    const REDIRECT_URI = window.location.origin;
     
     let currentUser = null;
     let API_URL = localStorage.getItem('apiEndpoint') || 'https://esreport.pella.sh/api/dashboard';
@@ -434,10 +433,8 @@
     const code = urlParams.get('code');
     
     if (code) {
-        // Exchange code for token using Discord API
         exchangeCodeForToken(code);
     } else {
-        // Check for existing session
         const savedUser = localStorage.getItem('sgfrp_user');
         if (savedUser) {
             currentUser = JSON.parse(savedUser);
@@ -446,31 +443,23 @@
     }
     
     async function exchangeCodeForToken(code) {
-        // Using Discord's token endpoint (requires backend, so we use a proxy)
-        // For static hosting, we need to use a CORS proxy or backend
-        // Since GitHub Pages is static, we'll use a simple approach:
-        // Store the code and redirect to a backend service
-        
-        // For now, we'll simulate a successful login with the code
-        // In production, you'd need a small backend or use a service like:
-        // https://cors-anywhere.herokuapp.com/ or your own server
-        
-        // Temporary solution: Manual verification for demo
-        console.log('OAuth code received:', code);
-        
-        // You need a backend to exchange this code
-        // For now, we'll use a simple prompt for admin access
-        const adminKey = prompt('Enter admin key to continue:');
-        if (adminKey === 'SGFRP2024') {
-            currentUser = {
-                id: '1252174197816561705',
-                username: 'Admin',
-                email: 'admin@sgrp.com',
-                avatar: null
-            };
-            localStorage.setItem('sgfrp_user', JSON.stringify(currentUser));
-            window.history.replaceState({}, document.title, window.location.pathname);
-            showMainApp();
+        try {
+            const response = await fetch(`/api/auth?code=${code}`);
+            const data = await response.json();
+            
+            if (data.user) {
+                currentUser = data.user;
+                localStorage.setItem('sgfrp_user', JSON.stringify(currentUser));
+                window.history.replaceState({}, document.title, window.location.pathname);
+                showMainApp();
+            } else {
+                alert('Login failed. Please try again.');
+                showLoginPage();
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+            alert('Login failed. Please try again.');
+            showLoginPage();
         }
     }
     
@@ -482,6 +471,11 @@
     function logout() {
         localStorage.removeItem('sgfrp_user');
         currentUser = null;
+        document.getElementById('loginPage').style.display = 'flex';
+        document.getElementById('mainApp').style.display = 'none';
+    }
+    
+    function showLoginPage() {
         document.getElementById('loginPage').style.display = 'flex';
         document.getElementById('mainApp').style.display = 'none';
     }
@@ -528,7 +522,7 @@
             document.getElementById('totalReports').innerText = data.stats.total || 0;
             
             if (data.reports && data.reports.length > 0) {
-                let html = '<table><thead><tr><th>Case ID</th><th>Reporter</th><th>Reported User</th><th>Type</th><th>Status</th></tr></thead><tbody>';
+                let html = '<tr><thead><tr><th>Case ID</th><th>Reporter</th><th>Reported User</th><th>Type</th><th>Status</th></tr></thead><tbody>';
                 for (const report of data.reports.slice(0, 10)) {
                     const badgeClass = report.report_type === 'roblox' ? 'badge-roblox' : 'badge-discord';
                     const badgeText = report.report_type === 'roblox' ? 'ROBLOX' : 'DISCORD';
@@ -572,7 +566,7 @@
             const data = await response.json();
             
             if (data.reports && data.reports.length > 0) {
-                let html = '<table><thead><tr><th>Case ID</th><th>Reporter</th><th>Reported User</th><th>Reason</th><th>Type</th><th>Status</th><th>Date</th></tr></thead><tbody>';
+                let html = '</table><thead><tr><th>Case ID</th><th>Reporter</th><th>Reported User</th><th>Reason</th><th>Type</th><th>Status</th><th>Date</th></tr></thead><tbody>';
                 for (const report of data.reports) {
                     const badgeClass = report.report_type === 'roblox' ? 'badge-roblox' : 'badge-discord';
                     const badgeText = report.report_type === 'roblox' ? 'ROBLOX' : 'DISCORD';
