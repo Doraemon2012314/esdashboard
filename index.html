@@ -6,7 +6,6 @@
     <title>SGFRP | Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/12.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore-compat.js"></script>
     <style>
@@ -44,7 +43,6 @@
 </head>
 <body>
 
-<!-- Login Page -->
 <div id="loginPage" class="login-container">
     <div class="login-card">
         <h1>SGFRP Management</h1>
@@ -55,7 +53,6 @@
     </div>
 </div>
 
-<!-- Main App -->
 <div id="mainApp" style="display:none" class="flex">
     <aside class="sidebar flex flex-col p-6">
         <div class="flex items-center gap-3 mb-10 px-2">
@@ -64,7 +61,6 @@
             </div>
             <span class="font-bold text-xl tracking-tight">SGFRP</span>
         </div>
-
         <div class="mb-8">
             <p class="text-[10px] uppercase tracking-widest text-gray-500 mb-4 px-2 font-bold">Workspace</p>
             <div class="server-selector">
@@ -72,7 +68,6 @@
                 <i class="fas fa-chevron-down text-[10px] text-gray-500"></i>
             </div>
         </div>
-
         <nav class="flex-1 space-y-1">
             <p class="text-[10px] uppercase tracking-widest text-gray-500 mb-2 mt-6 px-2 font-bold">Management</p>
             <a class="nav-link active" onclick="showPage('dashboard')">
@@ -84,7 +79,6 @@
             <a class="nav-link" onclick="showPage('reports')">
                 <i class="fas fa-file-shield w-5"></i> Report Logs
             </a>
-
             <p class="text-[10px] uppercase tracking-widest text-gray-500 mb-2 mt-8 px-2 font-bold">Advanced</p>
             <a class="nav-link" onclick="showPage('settings')">
                 <i class="fas fa-robot w-5"></i> Bot Settings
@@ -93,7 +87,6 @@
                 <i class="fas fa-database w-5"></i> Database
             </a>
         </nav>
-
         <div class="mt-auto pt-6 border-t border-[#1a1a1a]">
             <div class="flex items-center justify-between gap-3 px-2">
                 <div class="user-info">
@@ -109,9 +102,7 @@
             </div>
         </div>
     </aside>
-
     <main class="flex-1 overflow-y-auto p-12">
-        <!-- Dashboard Page -->
         <div id="dashboardPage">
             <div class="flex justify-between items-start mb-12">
                 <div>
@@ -123,7 +114,6 @@
                     <i class="fas fa-sync-alt"></i> Refresh
                 </button>
             </div>
-
             <div class="grid grid-cols-3 gap-6 mb-12">
                 <div class="card p-6">
                     <p class="text-gray-500 text-xs font-bold uppercase mb-2">Verified Users</p>
@@ -138,19 +128,14 @@
                     <h2 class="text-3xl font-bold" id="totalReports">0</h2>
                 </div>
             </div>
-
             <div class="card overflow-hidden">
                 <div class="p-6 border-b border-[#1a1a1a] flex items-center justify-between bg-[#0a0a0a]">
                     <h3 class="font-bold">Recent Report Activity</h3>
                     <i class="fas fa-ellipsis-h text-gray-600"></i>
                 </div>
-                <div id="reportsTable">
-                    <div class="loading">Loading reports...</div>
-                </div>
+                <div id="reportsTable"><div class="loading">Loading reports...</div></div>
             </div>
         </div>
-
-        <!-- Verification Page -->
         <div id="verificationPage" style="display: none;">
             <div class="flex justify-between items-start mb-12">
                 <div>
@@ -162,18 +147,13 @@
                     <i class="fas fa-sync-alt"></i> Refresh
                 </button>
             </div>
-
             <div class="card overflow-hidden">
                 <div class="p-6 border-b border-[#1a1a1a] bg-[#0a0a0a]">
                     <h3 class="font-bold">Verified Users List</h3>
                 </div>
-                <div id="verificationTable">
-                    <div class="loading">Loading verified users...</div>
-                </div>
+                <div id="verificationTable"><div class="loading">Loading verified users...</div></div>
             </div>
         </div>
-
-        <!-- Reports Page -->
         <div id="reportsPage" style="display: none;">
             <div class="flex justify-between items-start mb-12">
                 <div>
@@ -185,18 +165,13 @@
                     <i class="fas fa-sync-alt"></i> Refresh
                 </button>
             </div>
-
             <div class="card overflow-hidden">
                 <div class="p-6 border-b border-[#1a1a1a] bg-[#0a0a0a]">
                     <h3 class="font-bold">All Reports</h3>
                 </div>
-                <div id="allReportsTable">
-                    <div class="loading">Loading reports...</div>
-                </div>
+                <div id="allReportsTable"><div class="loading">Loading reports...</div></div>
             </div>
         </div>
-
-        <!-- Settings Page -->
         <div id="settingsPage" style="display: none;">
             <div class="flex justify-between items-start mb-12">
                 <div>
@@ -205,7 +180,6 @@
                     <p class="text-gray-400 mt-2">Configure bot behavior and preferences.</p>
                 </div>
             </div>
-
             <div class="card p-6 mb-6">
                 <h3 class="font-bold mb-4">Data Source</h3>
                 <p class="text-sm text-green-500">✓ Firebase Firestore Connected</p>
@@ -215,15 +189,12 @@
                 </div>
                 <button class="btn-blue mt-4 px-6 py-2 rounded-lg text-sm font-bold" onclick="saveSettings()">Save Settings</button>
             </div>
-
             <div class="card p-6">
                 <h3 class="font-bold mb-4">About</h3>
                 <p class="text-gray-400 text-sm">ESMT Report Bot v1.0</p>
                 <p class="text-gray-500 text-xs mt-2">Using Firebase Firestore for data storage</p>
             </div>
         </div>
-
-        <!-- Database Page -->
         <div id="databasePage" style="display: none;">
             <div class="flex justify-between items-start mb-12">
                 <div>
@@ -232,7 +203,6 @@
                     <p class="text-gray-400 mt-2">Firestore database statistics and information.</p>
                 </div>
             </div>
-
             <div class="grid grid-cols-2 gap-6 mb-12">
                 <div class="card p-6">
                     <p class="text-gray-500 text-xs font-bold uppercase mb-2">Total Reports</p>
@@ -243,7 +213,6 @@
                     <h2 class="text-3xl font-bold" id="dbVerifiedUsers">0</h2>
                 </div>
             </div>
-
             <div class="card p-6">
                 <h3 class="font-bold mb-4">Database Information</h3>
                 <div class="space-y-2 text-sm">
@@ -255,11 +224,9 @@
         </div>
     </main>
 </div>
-
 <div class="refresh-indicator" id="refreshIndicator">Auto-refresh: ON</div>
 
 <script>
-    // Initialize Firebase
     const firebaseConfig = {
         apiKey: "AIzaSyAYzKpKuOhtgvjbrs0h6OHUkTpbewYSVXg",
         authDomain: "esdashboard-7b2e7.firebaseapp.com",
@@ -272,7 +239,6 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     
-    // Discord OAuth2 Configuration
     const CLIENT_ID = '1494268332336222378';
     const REDIRECT_URI = 'https://esmoddashboard.netlify.app';
     
@@ -280,7 +246,6 @@
     let refreshInterval = parseInt(localStorage.getItem('refreshInterval')) || 30;
     let autoRefreshTimer = null;
     
-    // Check for OAuth callback
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
     
@@ -305,7 +270,7 @@
                 window.history.replaceState({}, document.title, window.location.pathname);
                 showMainApp();
             } else {
-                alert('Login failed. Please try again.');
+                alert('Login failed: ' + (data.error || 'Unknown error'));
                 showLoginPage();
             }
         } catch (error) {
@@ -335,17 +300,11 @@
     function showMainApp() {
         document.getElementById('loginPage').style.display = 'none';
         document.getElementById('mainApp').style.display = 'flex';
-        
         if (currentUser) {
             document.getElementById('userName').innerText = currentUser.username;
             document.getElementById('userEmail').innerText = currentUser.email || '';
-            if (currentUser.avatar) {
-                document.getElementById('userAvatar').src = `https://cdn.discordapp.com/avatars/${currentUser.id}/${currentUser.avatar}.png`;
-            } else {
-                document.getElementById('userAvatar').src = 'https://cdn.discordapp.com/embed/avatars/0.png';
-            }
+            document.getElementById('userAvatar').src = currentUser.avatar ? `https://cdn.discordapp.com/avatars/${currentUser.id}/${currentUser.avatar}.png` : 'https://cdn.discordapp.com/embed/avatars/0.png';
         }
-        
         loadSettings();
         fetchDashboardData();
         startAutoRefresh();
@@ -354,10 +313,8 @@
     function showPage(page) {
         document.querySelectorAll('[id$="Page"]').forEach(el => el.style.display = 'none');
         document.getElementById(`${page}Page`).style.display = 'block';
-        
         document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
         event.target.classList.add('active');
-        
         if (page === 'dashboard') fetchDashboardData();
         else if (page === 'verification') fetchVerificationData();
         else if (page === 'reports') fetchAllReports();
@@ -373,114 +330,65 @@
             const acceptedSnapshot = await db.collection('reports').where('status', '==', 'accepted').get();
             const deniedSnapshot = await db.collection('reports').where('status', '==', 'denied').get();
             
-            const total = allReportsSnapshot.size;
-            const pending = pendingSnapshot.size;
-            const accepted = acceptedSnapshot.size;
-            const denied = deniedSnapshot.size;
-            const verified = verifiedSnapshot.size;
-            
-            document.getElementById('verifiedCount').innerText = verified;
-            document.getElementById('pendingCount').innerText = pending;
-            document.getElementById('totalReports').innerText = total;
+            document.getElementById('verifiedCount').innerText = verifiedSnapshot.size;
+            document.getElementById('pendingCount').innerText = pendingSnapshot.size;
+            document.getElementById('totalReports').innerText = allReportsSnapshot.size;
             
             let html = '<table><thead><tr><th>Case ID</th><th>Reporter</th><th>Reported User</th><th>Type</th><th>Status</th></tr></thead><tbody>';
-            
             reportsSnapshot.forEach(doc => {
-                const report = doc.data();
-                const badgeClass = report.report_type === 'roblox' ? 'badge-roblox' : 'badge-discord';
-                const badgeText = report.report_type === 'roblox' ? 'ROBLOX' : 'DISCORD';
-                const statusText = report.status?.charAt(0).toUpperCase() + report.status?.slice(1) || 'Unknown';
-                
-                html += `<tr>
-                    <td class="font-mono text-blue-400">${report.case_id || 'N/A'}</td>
-                    <td class="font-medium">${escapeHtml(report.reporter_name || 'Unknown')}</td>
-                    <td>${escapeHtml(report.reported_user || 'Unknown')}</td>
-                    <td><span class="${badgeClass}">${badgeText}</span></td>
-                    <td class="status-${report.status}">${statusText}</td>
-                </tr>`;
+                const r = doc.data();
+                const badge = r.report_type === 'roblox' ? 'badge-roblox' : 'badge-discord';
+                const badgeText = r.report_type === 'roblox' ? 'ROBLOX' : 'DISCORD';
+                html += `<tr><td class="font-mono text-blue-400">${r.case_id || 'N/A'}</td><td>${escapeHtml(r.reporter_name || 'Unknown')}</td><td>${escapeHtml(r.reported_user || 'Unknown')}</td><td><span class="${badge}">${badgeText}</span></td><td class="status-${r.status}">${r.status?.toUpperCase() || 'UNKNOWN'}</td></tr>`;
             });
-            
             html += '</tbody></table>';
             document.getElementById('reportsTable').innerHTML = html;
-            
         } catch (error) {
-            console.error('Error fetching data:', error);
-            document.getElementById('reportsTable').innerHTML = '<div class="loading">Error loading data from Firebase. Make sure your bot is running and has written data to Firestore.</div>';
+            document.getElementById('reportsTable').innerHTML = '<div class="loading">Error loading data</div>';
         }
     }
     
     async function fetchVerificationData() {
         try {
-            const verifiedSnapshot = await db.collection('verified_users').where('verified', '==', true).get();
-            
+            const snapshot = await db.collection('verified_users').where('verified', '==', true).get();
             let html = '<table><thead><tr><th>Avatar</th><th>User ID</th><th>Username</th><th>Verified At</th><th>Method</th></tr></thead><tbody>';
-            
-            verifiedSnapshot.forEach(doc => {
-                const user = doc.data();
-                const avatarUrl = `https://cdn.discordapp.com/embed/avatars/${parseInt(user.user_id) % 5}.png`;
-                
-                html += `<tr>
-                    <td><img class="avatar" src="${avatarUrl}" style="width:32px;height:32px;"></td>
-                    <td class="font-mono">${user.user_id}</td>
-                    <td class="font-medium">${escapeHtml(user.discord_username)}</td>
-                    <td>${user.verified_at ? user.verified_at.substring(0, 10) : '-'}</td>
-                    <td><span class="badge-discord">${user.verification_method || 'OAuth'}</span></td>
-                </tr>`;
+            snapshot.forEach(doc => {
+                const u = doc.data();
+                const avatar = `https://cdn.discordapp.com/embed/avatars/${parseInt(u.user_id) % 5}.png`;
+                html += `<tr><td><img class="avatar" src="${avatar}" style="width:32px;height:32px;"></td><td class="font-mono">${u.user_id}</td><td>${escapeHtml(u.discord_username)}</td><td>${u.verified_at ? u.verified_at.substring(0,10) : '-'}</td><td><span class="badge-discord">${u.verification_method || 'OAuth'}</span></td></tr>`;
             });
-            
             html += '</tbody></table>';
             document.getElementById('verificationTable').innerHTML = html;
-            
         } catch (error) {
-            console.error('Error fetching verification data:', error);
-            document.getElementById('verificationTable').innerHTML = '<div class="loading">Error loading verification data.</div>';
+            document.getElementById('verificationTable').innerHTML = '<div class="loading">Error loading data</div>';
         }
     }
     
     async function fetchAllReports() {
         try {
-            const reportsSnapshot = await db.collection('reports').orderBy('created_at', 'desc').get();
-            
-            let html = '</table><thead><tr><th>Case ID</th><th>Reporter</th><th>Reported User</th><th>Reason</th><th>Type</th><th>Status</th><th>Date</th></tr></thead><tbody>';
-            
-            reportsSnapshot.forEach(doc => {
-                const report = doc.data();
-                const badgeClass = report.report_type === 'roblox' ? 'badge-roblox' : 'badge-discord';
-                const badgeText = report.report_type === 'roblox' ? 'ROBLOX' : 'DISCORD';
-                const statusText = report.status?.charAt(0).toUpperCase() + report.status?.slice(1) || 'Unknown';
-                
-                html += `<tr>
-                    <td class="font-mono text-blue-400">${report.case_id || 'N/A'}</td>
-                    <td class="font-medium">${escapeHtml(report.reporter_name || 'Unknown')}</td>
-                    <td>${escapeHtml(report.reported_user || 'Unknown')}</td>
-                    <td>${escapeHtml(report.reason ? report.reason.substring(0, 50) : '')}${report.reason?.length > 50 ? '...' : ''}</td>
-                    <td><span class="${badgeClass}">${badgeText}</span></td>
-                    <td class="status-${report.status}">${statusText}</td>
-                    <td>${report.created_at ? report.created_at.substring(0, 10) : '-'}</td>
-                </tr>`;
+            const snapshot = await db.collection('reports').orderBy('created_at', 'desc').get();
+            let html = '<table><thead><tr><th>Case ID</th><th>Reporter</th><th>Reported User</th><th>Reason</th><th>Type</th><th>Status</th><th>Date</th></tr></thead><tbody>';
+            snapshot.forEach(doc => {
+                const r = doc.data();
+                const badge = r.report_type === 'roblox' ? 'badge-roblox' : 'badge-discord';
+                const badgeText = r.report_type === 'roblox' ? 'ROBLOX' : 'DISCORD';
+                html += `<tr><td class="font-mono text-blue-400">${r.case_id || 'N/A'}</td><td>${escapeHtml(r.reporter_name || 'Unknown')}</td><td>${escapeHtml(r.reported_user || 'Unknown')}</td><td>${escapeHtml(r.reason ? r.reason.substring(0,50) : '')}</td><td><span class="${badge}">${badgeText}</span></td><td class="status-${r.status}">${r.status?.toUpperCase() || 'UNKNOWN'}</td><td>${r.created_at ? r.created_at.substring(0,10) : '-'}</td></tr>`;
             });
-            
             html += '</tbody></table>';
             document.getElementById('allReportsTable').innerHTML = html;
-            
         } catch (error) {
-            console.error('Error fetching reports:', error);
-            document.getElementById('allReportsTable').innerHTML = '<div class="loading">Error loading reports.</div>';
+            document.getElementById('allReportsTable').innerHTML = '<div class="loading">Error loading data</div>';
         }
     }
     
     async function fetchDatabaseStats() {
         try {
-            const reportsSnapshot = await db.collection('reports').get();
-            const verifiedSnapshot = await db.collection('verified_users').where('verified', '==', true).get();
-            
-            document.getElementById('dbTotalReports').innerText = reportsSnapshot.size;
-            document.getElementById('dbVerifiedUsers').innerText = verifiedSnapshot.size;
+            const reports = await db.collection('reports').get();
+            const users = await db.collection('verified_users').where('verified', '==', true).get();
+            document.getElementById('dbTotalReports').innerText = reports.size;
+            document.getElementById('dbVerifiedUsers').innerText = users.size;
             document.getElementById('lastSync').innerText = new Date().toLocaleString();
-            
-        } catch (error) {
-            console.error('Error fetching database stats:', error);
-        }
+        } catch (error) {}
     }
     
     function refreshData() { fetchDashboardData(); }
@@ -492,13 +400,10 @@
         if (newInterval && newInterval > 0) {
             refreshInterval = newInterval;
             localStorage.setItem('refreshInterval', newInterval);
-            if (autoRefreshTimer) {
-                clearInterval(autoRefreshTimer);
-                startAutoRefresh();
-            }
+            if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+            startAutoRefresh();
         }
         alert('Settings saved!');
-        fetchDashboardData();
     }
     
     function loadSettings() {
@@ -508,13 +413,8 @@
     function startAutoRefresh() {
         if (autoRefreshTimer) clearInterval(autoRefreshTimer);
         autoRefreshTimer = setInterval(() => {
-            const currentPage = document.querySelector('[id$="Page"]:not([style*="display: none"])');
-            if (currentPage && currentPage.id === 'dashboardPage') {
-                fetchDashboardData();
-                const indicator = document.getElementById('refreshIndicator');
-                indicator.style.opacity = '1';
-                setTimeout(() => { indicator.style.opacity = '0.5'; }, 500);
-            }
+            const page = document.querySelector('[id$="Page"]:not([style*="display: none"])');
+            if (page && page.id === 'dashboardPage') fetchDashboardData();
         }, refreshInterval * 1000);
     }
     
@@ -525,6 +425,5 @@
         return div.innerHTML;
     }
 </script>
-
 </body>
 </html>
