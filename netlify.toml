@@ -1,7 +1,9 @@
 [build]
+  # This tells Netlify that serverless functions are in the "api" folder
   functions = "api"
 
 [[redirects]]
+  # This ensures any route not matching a file or function goes to index.html
   from = "/*"
   to = "/index.html"
   status = 200
